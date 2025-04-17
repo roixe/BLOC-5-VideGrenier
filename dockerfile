@@ -1,11 +1,13 @@
 FROM debian:11
 
-# Ajout des dépôts nécessaires pour PHP 8.1
-RUN apt-get update && apt-get install -y lsb-release apt-transport-https ca-certificates wget gnupg2
+ARG APACHE_CONF
+
+# Installer les paquets de base + repo PHP
+RUN apt-get update && apt-get install -y lsb-release apt-transport-https ca-certificates wget gnupg2 curl unzip git
 RUN wget -qO - https://packages.sury.org/php/apt.gpg | apt-key add -
 RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list
 
-# Installer Apache, PHP 8.1 et extensions
+# PHP, Apache et extensions
 RUN apt-get update && apt-get install -y \
     apache2 \
     php8.1 \
@@ -17,25 +19,26 @@ RUN apt-get update && apt-get install -y \
     php8.1-zip \
     php8.1-intl \
     php8.1-gd \
-    unzip \
-    git \
-    curl \
     && apt-get clean
 
-# Activer rewrite et corriger le ServerName
+# Apache configuration
 RUN a2enmod rewrite
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# Copier le projet
+# Installer Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Apache conf dynamique
+COPY apache/${APACHE_CONF} /etc/apache2/sites-available/000-default.conf
+
+# Copie projet
 COPY . /var/www/html
+WORKDIR /var/www/html
 
-# Définir le bon DocumentRoot
-RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+# Installer les dépendances PHP
+RUN composer install --no-dev --optimize-autoloader
 
-# .htaccess autorisé
-RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
-
-# Droits
+# Permissions
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
