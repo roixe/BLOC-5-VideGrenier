@@ -35,8 +35,8 @@ jobs:
 
       - name: Create apache config from secrets
         run: |
-          mkdir -p apache
-          echo "${{ secrets.apache_conf_content }}" > apache/${{ secrets.apache_conf }}
+         mkdir -p apache
+         printf '%s' "${{ secrets.apache_conf_content }}" > apache/${{ secrets.apache_conf }}
 
       - name: Build Docker image
         run: |
