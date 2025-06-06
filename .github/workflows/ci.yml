@@ -8,6 +8,7 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -16,7 +17,7 @@ jobs:
         run: |
           cat <<EOF > .env.dev
           ENV_FILE=.env.dev
-          APACHE_CONF=${{ secrets.APACHE_CONF }}
+          APACHE_CONF=${{ secrets.apache_conf }}
           APP_ENV=${{ secrets.APP_ENV }}
           APP_PORT=8080
           DB_PORT=3306
@@ -32,17 +33,14 @@ jobs:
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           EOF
 
-      - name: Create apache config from secret
+      - name: Create apache config from secrets
         run: |
           mkdir -p apache
-          echo "${{ secrets.APACHE_CONF}}" > apache/${{ secrets.APACHE_CONF }}
+          echo "${{ secrets.apache_conf_content }}" > apache/${{ secrets.apache_conf }}
 
       - name: Build Docker image
         run: |
-          docker build --build-arg APP_ENV=${{ secrets.APP_ENV }} --build-arg APACHE_CONF=${{ secrets.APACHE_CONF }} -t mon-app:test .
+          docker build --build-arg APP_ENV=${{ secrets.APP_ENV }} --build-arg APACHE_CONF=${{ secrets.apache_conf }} -t mon-app:test .
 
       - name: Run tests
         run: docker run --rm mon-app:test ./vendor/bin/phpunit
-
-
-
