@@ -1,0 +1,22 @@
+name: CI - PHP Tests
+
+on:
+  push:
+    branches:
+      - develop
+      - bug-fix  # ajoute toutes les branches que tu veux surveiller
+
+jobs:
+build-and-push:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v3
+
+      - name: Construire l'image Docker
+        run: docker build -t videgrenier-dev:test .
+
+      - name: Exécuter les tests dans Docker
+        run: docker run --rm videgrenier-dev:test ./vendor/bin/phpunit
