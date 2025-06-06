@@ -1,4 +1,4 @@
-name: CI - PHP Tests
+name: CI - PHP Test
 
 on:
   push:
