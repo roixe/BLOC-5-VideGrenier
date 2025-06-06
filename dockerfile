@@ -13,7 +13,6 @@ RUN apt-get update && apt-get install -y \
     apache2 \
     php8.4 \
     composer \
-    composer install --no-interaction --optimize-autoloader\
     libapache2-mod-php8.4 \
     php8.4-mysql \
     php8.4-xml \
@@ -38,6 +37,8 @@ COPY apache/${APACHE_CONF} /etc/apache2/sites-available/000-default.conf
 
 COPY . /var/www/html
 WORKDIR /var/www/html
+
+RUN composer install --no-interaction --optimize-autoloader
 
 RUN chown -R www-data:www-data /var/www/html
 
