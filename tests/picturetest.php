@@ -26,5 +26,6 @@ class picturetest extends TestCase
 
         // Vérifie que le message d'erreur est présent
         $this->assertStringContainsString('Une photo est obligatoire', $output);
+        
     }
 }
