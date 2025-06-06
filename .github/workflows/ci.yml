@@ -5,21 +5,44 @@ on:
     branches:
       - develop
 
-env:
-  APACHE_CONF: dev.conf
-  
 jobs:
-  tests:
+  build-and-test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Récupérer le code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Construire l'image Docker
-        run: docker build -t videgrenier-dev:test .
+      - name: Create .env.dev file securely from secrets
+        run: |
+          cat <<EOF > .env.dev
+          ENV_FILE=.env.dev
+          APACHE_CONF=${{ secrets.APACHE_CONF }}
+          APP_ENV=${{ secrets.APP_ENV }}
+          APP_PORT=8080
+          DB_PORT=3306
+          MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
+          MYSQL_USER=${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+          DB_CONNECTION=${{ secrets.DB_CONNECTION }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_DATABASE=${{ secrets.DB_DATABASE }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          EOF
 
-      - name: Exécuter les tests dans Docker
-        run: docker run --rm  videgrenier-dev:test ./vendor/bin/phpunit
+      - name: Create apache config from secret
+        run: |
+          mkdir -p apache
+          echo "${{ secrets.APACHE_CONF_CONTENT }}" > apache/dev.conf
+
+      - name: Build Docker image
+        run: |
+          docker build --build-arg APP_ENV=${{ secrets.APP_ENV }} --build-arg APACHE_CONF=${{ secrets.APACHE_CONF }} -t mon-app:test .
+
+      - name: Run tests
+        run: docker run --rm mon-app:test ./vendor/bin/phpunit
+
 
 
