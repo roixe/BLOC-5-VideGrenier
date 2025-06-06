@@ -32,8 +32,12 @@ jobs:
           DB_USERNAME=${{ secrets.DB_USERNAME }}
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           EOF
-
+      - name: Debug apache_conf and apache_conf_content
+        run: |
+          echo "apache_conf='${{ secrets.apache_conf }}'"
+          echo "apache_conf_content length = $(echo '${{ secrets.apache_conf_content }}' | wc -c)"
       - name: Create apache config from secrets
+      
         run: |
          mkdir -p apache
          printf '%s' "${{ secrets.APACHE_CONF_CONTENT}}" > apache/${{ secrets.APACHE_CONF}}
