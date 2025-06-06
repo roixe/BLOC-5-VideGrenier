@@ -86,4 +86,15 @@
             }
         });
     </script>
+    {% if errors %}
+    <div class="alert">
+        <ul>
+        {% for error in errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endif %}
 {% endblock %}
+
+

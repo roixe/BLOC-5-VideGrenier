@@ -17,30 +17,42 @@ class Product extends \Core\Controller
      * @return void
      */
     public function indexAction()
-    {
+{
+    if (isset($_POST['submit'])) {
 
-        if(isset($_POST['submit'])) {
+        $errors = [];
 
+        // Vérification de l'image
+        if (!isset($_FILES['picture']) || $_FILES['picture']['error'] === UPLOAD_ERR_NO_FILE) {
+            $errors[] = "Une photo est obligatoire pour publier une annonce.";
+        }
+
+        if (empty($errors)) {
             try {
                 $f = $_POST;
-
-                // TODO: Validation
-
                 $f['user_id'] = $_SESSION['user']['id'];
                 $id = Articles::save($f);
 
                 $pictureName = Upload::uploadFile($_FILES['picture'], $id);
-
                 Articles::attachPicture($id, $pictureName);
 
                 header('Location: /product/' . $id);
-            } catch (\Exception $e){
-                    var_dump($e);
+                exit;
+
+            } catch (\Exception $e) {
+                $errors[] = "Une erreur s'est produite : " . $e->getMessage();
             }
         }
 
+        // Si erreur, on renvoie la vue avec message
+        View::renderTemplate('Product/Add.html', [
+            'errors' => $errors
+        ]);
+    } else {
         View::renderTemplate('Product/Add.html');
     }
+}
+
 
     /**
      * Affiche la page d'un produit
