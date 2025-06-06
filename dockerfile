@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     apache2 \
     php8.4 \
     composer \
+    composer install --no-interaction --optimize-autoloader\
     libapache2-mod-php8.4 \
     php8.4-mysql \
     php8.4-xml \
