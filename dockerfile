@@ -38,7 +38,7 @@ RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Apache conf dynamique
-COPY apache/${APACHE_CONF} /etc/apache2/sites-available/000-default.conf
+COPY apache/{"$APACHE_CONF"} /etc/apache2/sites-available/000-default.conf
 
 # Copie projet
 COPY . /var/www/html
