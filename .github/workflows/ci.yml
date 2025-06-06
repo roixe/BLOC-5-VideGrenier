@@ -34,8 +34,8 @@ jobs:
           EOF
       - name: Debug apache_conf and apache_conf_content
         run: |
-          echo "apache_conf='${{ secrets.apache_conf }}'"
-          echo "apache_conf_content length = $(echo '${{ secrets.apache_conf_content }}' | wc -c)"
+          echo "APACHE_CONF='${{ secrets.APACHE.CONF }}'"
+          echo "APACHE_CONF_CONTENT length = $(echo '${{ secrets.APACHE_CONF_CONTENT }}' | wc -c)"
       - name: Create apache config from secrets
       
         run: |
