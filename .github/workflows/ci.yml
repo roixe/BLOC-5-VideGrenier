@@ -32,15 +32,6 @@ jobs:
           DB_USERNAME=${{ secrets.DB_USERNAME }}
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           EOF
-      - name: Debug apache_conf and apache_conf_content
-        run: |
-          echo "APACHE_CONF='${{ secrets.APACHE.CONF }}'"
-          echo "APACHE_CONF_CONTENT length = $(echo '${{ secrets.APACHE_CONF_CONTENT }}' | wc -c)"
-      - name: Create apache config from secrets
-      
-        run: |
-         mkdir -p apache
-         printf '%s' "${{ secrets.APACHE_CONF_CONTENT}}" > apache/${{ secrets.APACHE_CONF}}
 
       - name: Build Docker image
         run: |
