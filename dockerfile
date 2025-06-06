@@ -1,7 +1,7 @@
 FROM debian:11
 
 ARG APP_ENV
-ARG APACHE_CONF
+ARG APACHE_CONF=000-default.conf
 
 # Installer les paquets de base + repo PHP
 RUN apt-get update && apt-get install -y \
