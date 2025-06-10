@@ -5,7 +5,7 @@ use PHPUnit\Framework\MockObject\MockMethod;
 use PHPUnit\Framework\TestCase;
 use App\Controllers\Product;
 
-class picturetest extends TestCase
+class PictureTest extends TestCase
 {
     public function testMissingPhotoTriggersError()
     {
