@@ -1,0 +1,48 @@
+name: CI - PHP Test
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  build-and-test:
+    environment: APACHE_CONF_DEV
+    runs-on: ubuntu-latest
+    
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create .env.dev file securely from secrets
+        run: |
+          cat <<EOF > .env.dev
+          ENV_FILE=.env.dev
+          APACHE_CONF=${{ secrets.apache_conf }}
+          APP_ENV=${{ secrets.APP_ENV }}
+          APP_PORT=8080
+          DB_PORT=3306
+          MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
+          MYSQL_USER=${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+          DB_CONNECTION=${{ secrets.DB_CONNECTION }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_DATABASE=${{ secrets.DB_DATABASE }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          EOF
+
+      - name: Build Docker image
+        run: |
+          docker build --build-arg APP_ENV=${{ secrets.APP_ENV }} --build-arg APACHE_CONF=${{ secrets.APACHE_CONF }} -t mon-app:test .
+
+      - name: Run tests
+        run: docker run --rm mon-app:test ./vendor/bin/phpunit tests/
