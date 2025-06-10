@@ -24,7 +24,6 @@ class picturetest extends TestCase
         $controller->indexAction();
         $output = ob_get_clean();
         // Vérifie que le message d'erreur est présent
-        
         $this->assertStringContainsString('Une photo est obligatoire', $output);
     }
 }
