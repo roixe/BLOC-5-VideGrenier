@@ -3,6 +3,8 @@ FROM debian:11
 ARG APP_ENV
 ARG APACHE_CONF=000-default.conf
 
+ENV APP_ENV=${APP_ENV}
+
 RUN apt-get update && apt-get install -y \
     lsb-release apt-transport-https ca-certificates wget gnupg2 curl unzip git
 
@@ -22,11 +24,7 @@ RUN apt-get update && apt-get install -y \
     php8.4-intl \
     php8.4-gd \
     php8.4-dom \
-    $(if [ "$APP_ENV" = "dev" ]; then echo "php-pear"; fi) \
-    && apt-get clean \
-    && if [ "$APP_ENV" = "dev" ]; then \
-        composer require --dev phpunit/phpunit ^9.5; \
-    fi
+    && apt-get clean
 
 RUN a2enmod rewrite
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
@@ -38,7 +36,12 @@ COPY apache/${APACHE_CONF} /etc/apache2/sites-available/000-default.conf
 COPY . /var/www/html
 WORKDIR /var/www/html
 
-RUN composer install --no-interaction --optimize-autoloader
+# Installation conditionnelle des dépendances avec ou sans les packages de dev
+RUN if [ "$APP_ENV" = "dev" ]; then \
+      composer install --no-interaction; \
+    else \
+      composer install --no-interaction --optimize-autoloader --no-dev; \
+    fi
 
 RUN chown -R www-data:www-data /var/www/html
 
