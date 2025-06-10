@@ -43,4 +43,4 @@ jobs:
           docker build --build-arg APP_ENV=${{ secrets.APP_ENV }} --build-arg APACHE_CONF=${{ secrets.APACHE_CONF }} -t mon-app:test .
 
       - name: Run tests
-        run: docker run --rm mon-app:test ./vendor/bin/phpunit tests
+        run: docker run --rm mon-app:test ./vendor/bin/phpunit tests/
