@@ -12,15 +12,13 @@ on:
 
 jobs:
   build-and-test:
-    environment: APACHE_CONF_DEV
     runs-on: ubuntu-latest
-    
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Create .env.dev file securely from secrets
+      - name: Create .env.dev file from secrets
         run: |
           cat <<EOF > .env.dev
           ENV_FILE=.env.dev
@@ -33,16 +31,29 @@ jobs:
           MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
           MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
           DB_CONNECTION=${{ secrets.DB_CONNECTION }}
-          DB_HOST=${{ secrets.DB_HOST }}
-          DB_PORT=${{ secrets.DB_PORT }}
+          DB_HOST=db
+          DB_PORT=3306
           DB_DATABASE=${{ secrets.DB_DATABASE }}
           DB_USERNAME=${{ secrets.DB_USERNAME }}
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           EOF
 
-      - name: Build Docker image
+      - name: Build containers
+        run: docker-compose -f docker-compose.yml --env-file .env.dev build
+
+      - name: Start containers in background
+        run: docker-compose -f docker-compose.yml --env-file .env.dev up -d
+
+      - name: Wait for MySQL to be ready
         run: |
-          docker build --build-arg APP_ENV=${{ secrets.APP_ENV }} --build-arg APACHE_CONF=${{ secrets.APACHE_CONF }} -t mon-app:test .
+          echo "Waiting for MySQL..."
+          until docker exec videgrenier-web-${{ secrets.APP_ENV }} \
+            mysql -hdb -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} -e "SELECT 1"; do
+            sleep 2
+          done
 
       - name: Run tests
-        run: docker run --rm mon-app:test ./vendor/bin/phpunit tests/
+        run: docker-compose exec web ./vendor/bin/phpunit tests/
+
+      - name: Stop containers
+        run: docker-compose down
