@@ -23,7 +23,7 @@ jobs:
           cat <<EOF > .env.dev
           ENV_FILE=.env.dev
           APACHE_CONF=${{ secrets.APACHE_CONF }}
-          DB_VOLUME=${{ secrets.DB_VOLUME }}
+          DB_VOLUME=db_data_dev
           APP_ENV=${{ secrets.APP_ENV }}
           APP_PORT=8080
           DB_PORT=3306
