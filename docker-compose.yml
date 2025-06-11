@@ -32,8 +32,8 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
-          - ${DB_VOLUME}:/var/lib/mysql
-          - ./sql/import.sql:/docker-entrypoint-initdb.d/import.sql
+      - ${DB_VOLUME}:/var/lib/mysql
+      - ./sql/import.sql:/docker-entrypoint-initdb.d/import.sql
 
 volumes:
   db_data_dev:
