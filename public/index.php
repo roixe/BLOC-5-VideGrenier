@@ -13,6 +13,8 @@ session_start();
  */
 require dirname(__DIR__) . '/vendor/autoload.php';
 
+\App\Config::init();
+
 
 /**
  * Error and Exception handling
