@@ -6,73 +6,98 @@ use App\Models\Articles;
 use App\Utility\Upload;
 use \Core\View;
 
-/**
- * Product controller
- */
 class Product extends \Core\Controller
 {
+    private Articles $articlesModel;
+    private Upload $uploadUtility;
+
+    public function __construct(Articles $articlesModel = null, Upload $uploadUtility = null)
+    {
+        $this->articlesModel = $articlesModel ?? new Articles();
+        $this->uploadUtility = $uploadUtility ?? new Upload();
+    }
 
     /**
-     * Affiche la page d'ajout
-     * @return void
+     * Création d’un produit, renvoie tableau avec erreurs et id
      */
-    public function indexAction()
-{
-    if (isset($_POST['submit'])) {
-
+    public function createProduct(array $postData, array $filesData, int $userId): array
+    {
         $errors = [];
 
-        // Vérification de l'image
-        if (!isset($_FILES['picture']) || $_FILES['picture']['error'] === UPLOAD_ERR_NO_FILE) {
+        if (!isset($filesData['picture']) || $filesData['picture']['error'] === UPLOAD_ERR_NO_FILE) {
             $errors[] = "Une photo est obligatoire pour publier une annonce.";
         }
 
         if (empty($errors)) {
             try {
-                $f = $_POST;
-                $f['user_id'] = $_SESSION['user']['id'];
-                $id = Articles::save($f);
+                $f = $postData;
+                $f['user_id'] = $userId;
 
-                $pictureName = Upload::uploadFile($_FILES['picture'], $id);
-                Articles::attachPicture($id, $pictureName);
+                $id = $this->articlesModel->save($f);
+                $pictureName = $this->uploadUtility->uploadFile($filesData['picture'], $id);
+                $this->articlesModel->attachPicture($id, $pictureName);
 
-                header('Location: /product/' . $id);
-                exit;
-
+                return ['errors' => [], 'id' => $id];
             } catch (\Exception $e) {
                 $errors[] = "Une erreur s'est produite : " . $e->getMessage();
             }
         }
 
-        // Si erreur, on renvoie la vue avec message
-        View::renderTemplate('Product/Add.html', [
-            'errors' => $errors
-        ]);
-    } else {
-        View::renderTemplate('Product/Add.html');
+        return ['errors' => $errors, 'id' => null];
     }
-}
 
+    /**
+     * Affiche la page d'ajout
+     */
+    public function indexAction()
+    {
+        if (isset($_POST['submit'])) {
+            $result = $this->createProduct($_POST, $_FILES, $_SESSION['user']['id']);
+
+            if (empty($result['errors'])) {
+                header('Location: /product/' . $result['id']);
+                exit;
+            }
+
+            View::renderTemplate('Product/Add.html', [
+                'errors' => $result['errors']
+            ]);
+        } else {
+            View::renderTemplate('Product/Add.html');
+        }
+    }
+
+    /**
+     * Récupère les données pour afficher un produit
+     */
+    public function getShowData(int $id): array
+    {
+        $this->articlesModel->addOneView($id);
+        $suggestions = $this->articlesModel->getSuggest();
+        $article = $this->articlesModel->getOne($id);
+
+        return [
+            'article' => $article[0] ?? null,
+            'suggestions' => $suggestions
+        ];
+    }
 
     /**
      * Affiche la page d'un produit
-     * @return void
      */
     public function showAction()
     {
         $id = $this->route_params['id'];
 
         try {
-            Articles::addOneView($id);
-            $suggestions = Articles::getSuggest();
-            $article = Articles::getOne($id);
-        } catch(\Exception $e){
-            var_dump($e);
+            $data = $this->getShowData($id);
+        } catch (\Exception $e) {
+            $data = [
+                'article' => null,
+                'suggestions' => []
+            ];
         }
 
-        View::renderTemplate('Product/Show.html', [
-            'article' => $article[0],
-            'suggestions' => $suggestions
-        ]);
+        View::renderTemplate('Product/Show.html', $data);
     }
 }

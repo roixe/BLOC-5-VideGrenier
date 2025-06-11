@@ -4,40 +4,44 @@ namespace App\Controllers;
 
 use App\Models\Articles;
 use App\Models\Cities;
-use \Core\View;
-use Exception;
 
-/**
- * API controller
- */
 class Api extends \Core\Controller
 {
+    private $articlesModel;
+    private $citiesModel;
 
-    /**
-     * Affiche la liste des articles / produits pour la page d'accueil
-     *
-     * @throws Exception
-     */
-    public function ProductsAction()
+    public function __construct($articlesModel = null, $citiesModel = null)
     {
-        $query = $_GET['sort'];
-
-        $articles = Articles::getAll($query);
-
-        header('Content-Type: application/json');
-        echo json_encode($articles);
+        $this->articlesModel = $articlesModel ?? new Articles();
+        $this->citiesModel = $citiesModel ?? new Cities();
     }
 
-    /**
-     * Recherche dans la liste des villes
-     *
-     * @throws Exception
-     */
-    public function CitiesAction(){
+    public function getProductsData(array $query): array
+    {
+        return $this->articlesModel->getAll($query);
+    }
 
-        $cities = Cities::search($_GET['query']);
+    public function getCitiesData(array $query): array
+    {
+        return $this->citiesModel->search($query);
+    }
+
+    public function ProductsAction($query = null)
+    {
+        $query = $query ?? $_GET;
+        $data = $this->getProductsData($query);
 
         header('Content-Type: application/json');
-        echo json_encode($cities);
+        echo json_encode($data);
+    }
+
+    public function CitiesAction($query = null)
+    {
+        $query = $query ?? $_GET;
+        $data = $this->getCitiesData($query);
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
     }
 }
+
