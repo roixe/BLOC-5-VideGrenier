@@ -2,7 +2,6 @@ FROM debian:11
 
 ARG APP_ENV
 ARG APACHE_CONF=000-default.conf
-
 ENV APP_ENV=${APP_ENV}
 
 RUN apt-get update && apt-get install -y \
@@ -13,38 +12,39 @@ RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt
 
 RUN apt-get update && apt-get install -y \
     apache2 \
-    php8.4 \
-    composer \
-    libapache2-mod-php8.4 \
-    php8.4-mysql \
-    php8.4-xml \
-    php8.4-mbstring \
-    php8.4-curl \
-    php8.4-zip \
-    php8.4-intl \
-    php8.4-gd \
-    php8.4-dom \
+    php8.1 \
+    libapache2-mod-php8.1 \
+    php8.1-mysql \
+    php8.1-xml \
+    php8.1-mbstring \
+    php8.1-curl \
+    php8.1-zip \
+    php8.1-intl \
+    php8.1-gd \
+    php8.1-dom \
+    unzip \
+    curl \
     && apt-get clean
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN a2enmod rewrite
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
 COPY apache/${APACHE_CONF} /etc/apache2/sites-available/000-default.conf
 
+# Copie du projet
 COPY . /var/www/html
 WORKDIR /var/www/html
 
-# Installation conditionnelle des dépendances avec ou sans les packages de dev
-RUN if [ "$APP_ENV" = "dev" ]; then \
-      composer install --no-interaction; \
-    else \
-      composer install --no-interaction --optimize-autoloader --no-dev; \
-    fi
+# Installation conditionnelle
+RUN if [ "$APP_ENV" = "prod" ]; then \
+    composer install --no-dev --optimize-autoloader; \
+  else \
+    composer install; \
+  fi
 
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
-
 CMD ["apachectl", "-D", "FOREGROUND"]

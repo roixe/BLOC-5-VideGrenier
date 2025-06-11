@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Models\Articles;
 use \Core\View;
 use Exception;
 
@@ -11,16 +10,15 @@ use Exception;
  */
 class Home extends \Core\Controller
 {
+    protected $view;
 
-    /**
-     * Affiche la page d'accueil
-     *
-     * @return void
-     * @throws \Exception
-     */
+    public function __construct()
+    {
+        $this->view = new View();
+    }
+
     public function indexAction()
     {
-
-        View::renderTemplate('Home/index.html', []);
+        $this->view->renderTemplate('Home/index.html', []);
     }
 }
