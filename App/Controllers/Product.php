@@ -4,17 +4,19 @@ namespace App\Controllers;
 
 use App\Models\Articles;
 use App\Utility\Upload;
-use \Core\View;
+use Core\View;
 
 class Product extends \Core\Controller
 {
     private Articles $articlesModel;
     private Upload $uploadUtility;
+    protected View $view;
 
-    public function __construct(Articles $articlesModel = null, Upload $uploadUtility = null)
+    public function __construct()
     {
-        $this->articlesModel = $articlesModel ?? new Articles();
-        $this->uploadUtility = $uploadUtility ?? new Upload();
+        $this->articlesModel = new Articles();
+        $this->uploadUtility = new Upload();
+        $this->view = new View();
     }
 
     /**
@@ -59,11 +61,11 @@ class Product extends \Core\Controller
                 exit;
             }
 
-            View::renderTemplate('Product/Add.html', [
+            $this->view->renderTemplate('Product/Add.html', [
                 'errors' => $result['errors']
             ]);
         } else {
-            View::renderTemplate('Product/Add.html');
+            $this->view->renderTemplate('Product/Add.html');
         }
     }
 
@@ -98,6 +100,6 @@ class Product extends \Core\Controller
             ];
         }
 
-        View::renderTemplate('Product/Show.html', $data);
+        $this->view->renderTemplate('Product/Show.html', $data);
     }
 }

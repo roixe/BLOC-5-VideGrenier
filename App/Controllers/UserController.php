@@ -2,15 +2,17 @@
 namespace App\Controllers;
 
 use App\Models\User;
-use \Core\View;
+use Core\View;
 
 class UserController
 {
     private User $userModel;
+    protected View $view;
 
-    public function __construct(User $userModel)
+    public function __construct(User $userModel = null)
     {
-        $this->userModel = $userModel;
+        $this->userModel = $userModel ?? new User();
+        $this->view = new View();
     }
 
     public function loginAction(array $post = null)
@@ -28,7 +30,6 @@ class UserController
                 if ($hashedPassword !== $user['password']) {
                     $errors[] = 'Mot de passe incorrect';
                 } else {
-                    // Auth success : start session and set user data
                     if (session_status() !== PHP_SESSION_ACTIVE) {
                         session_start();
                     }
@@ -39,8 +40,7 @@ class UserController
             }
         }
 
-        // Render login form with errors if any
-        View::renderTemplate('User/login.html', ['errors' => $errors]);
+        $this->view->renderTemplate('User/login.html', ['errors' => $errors]);
     }
 
     public function logoutAction()
@@ -82,7 +82,7 @@ class UserController
             }
         }
 
-        View::renderTemplate('User/register.html', ['errors' => $errors]);
+        $this->view->renderTemplate('User/register.html', ['errors' => $errors]);
     }
 
     public function accountAction(array $session = null)
@@ -94,10 +94,9 @@ class UserController
             exit;
         }
 
-        // Supposons que le modèle User a une méthode getUserArticles()
         $articles = $this->userModel->getUserArticles($session['user']['id']);
 
-        View::renderTemplate('User/account.html', [
+        $this->view->renderTemplate('User/account.html', [
             'articles' => $articles
         ]);
     }
