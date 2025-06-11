@@ -18,11 +18,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Create .env.dev file from secrets
+      - name: Create .env.dev file securely from secrets
         run: |
           cat <<EOF > .env.dev
           ENV_FILE=.env.dev
-          APACHE_CONF=${{ secrets.apache_conf }}
+          APACHE_CONF=${{ secrets.APACHE_CONF }}
           APP_ENV=${{ secrets.APP_ENV }}
           APP_PORT=8080
           DB_PORT=3306
@@ -31,29 +31,40 @@ jobs:
           MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
           MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
           DB_CONNECTION=${{ secrets.DB_CONNECTION }}
-          DB_HOST=db
-          DB_PORT=3306
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
           DB_DATABASE=${{ secrets.DB_DATABASE }}
           DB_USERNAME=${{ secrets.DB_USERNAME }}
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           EOF
 
-      - name: Build containers
-        run: docker-compose -f docker-compose.yml --env-file .env.dev build
+      - name: Docker version info
+        run: |
+          docker --version
+          docker compose version
 
-      - name: Start containers in background
-        run: docker-compose -f docker-compose.yml --env-file .env.dev up -d
+      - name: Build Docker containers
+        run: docker compose -f docker-compose.yml --env-file .env.dev build
+
+      - name: Start Docker containers
+        run: docker compose -f docker-compose.yml --env-file .env.dev up -d
 
       - name: Wait for MySQL to be ready
         run: |
-          echo "Waiting for MySQL..."
-          until docker exec videgrenier-web-${{ secrets.APP_ENV }} \
-            mysql -hdb -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} -e "SELECT 1"; do
+          echo "Waiting for MySQL to be ready..."
+          retries=0
+          until docker compose exec db mysqladmin ping -h db --silent; do
+            retries=$((retries+1))
+            if [ $retries -ge 30 ]; then
+              echo "MySQL did not become ready in time"
+              exit 1
+            fi
             sleep 2
           done
 
-      - name: Run tests
-        run: docker-compose exec web ./vendor/bin/phpunit tests/
+      - name: Run PHPUnit tests
+        run: docker compose exec web ./vendor/bin/phpunit tests/
 
-      - name: Stop containers
-        run: docker-compose down
+      - name: Stop Docker containers
+        if: always()
+        run: docker compose down
