@@ -12,7 +12,7 @@ class ApiTest extends TestCase
 
     public function testProductsActionReturnsJson()
     {
-        $_GET['sort'] = 'date';
+        $_GET['sort'] = 'date'; // Paramètre obligatoire attendu dans le contrôleur
 
         ob_start();
         $controller = new Api([]);
@@ -34,6 +34,8 @@ class ApiTest extends TestCase
 
     public function testProductsActionWithoutSortParam()
     {
+        $_GET['sort'] = ''; // Protection pour éviter l'erreur "Undefined array key"
+
         ob_start();
         $controller = new Api([]);
         $controller->ProductsAction();
@@ -47,7 +49,7 @@ class ApiTest extends TestCase
 
     public function testProductsActionWithInvalidSortReturnsJson()
     {
-        $_GET['sort'] = 'invalid_sort';
+        $_GET['sort'] = 'invalid_sort'; // Cas non attendu mais qui ne doit pas planter
 
         ob_start();
         $controller = new Api([]);
@@ -62,7 +64,7 @@ class ApiTest extends TestCase
 
     public function testCitiesActionReturnsJson()
     {
-        $_GET['query'] = 'Paris';
+        $_GET['query'] = 'Paris'; // Valeur réaliste pour chercher une ville
 
         ob_start();
         $controller = new Api([]);
@@ -83,6 +85,8 @@ class ApiTest extends TestCase
 
     public function testCitiesActionWithoutQueryReturnsJson()
     {
+        $_GET['query'] = ''; // Évite l'erreur si le contrôleur n'utilise pas ?? ou isset()
+
         ob_start();
         $controller = new Api([]);
         $controller->CitiesAction();
