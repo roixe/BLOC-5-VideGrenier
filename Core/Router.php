@@ -102,7 +102,7 @@ class Router
      *
      * @return void
      */
-    public function dispatch($url)
+   public function dispatch($url)
 {
     $url = $this->removeQueryStringVariables($url);
 
@@ -117,10 +117,13 @@ class Router
                 throw new \Exception("You must be logged in");
             }
 
+            // Injecter les params dans $_GET pour les rendre accessibles dans le contrôleur
+            $_GET = array_merge($_GET, $this->params);
+
             $controller_object = new $controller();
 
             $action = $this->params['action'];
-            $action = $this->convertToCamelCase($action) . 'Action';  // Ajout du suffixe Action
+            $action = $this->convertToCamelCase($action) . 'Action';
 
             if (method_exists($controller_object, $action)) {
                 $controller_object->$action();

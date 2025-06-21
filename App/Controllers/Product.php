@@ -87,19 +87,25 @@ class Product extends \Core\Controller
     /**
      * Affiche la page d'un produit
      */
-    public function showAction()
-    {
-        $id = $this->route_params['id'];
+public function showAction()
+{
+    $id = $_GET['id'] ?? null;
 
-        try {
-            $data = $this->getShowData($id);
-        } catch (\Exception $e) {
-            $data = [
-                'article' => null,
-                'suggestions' => []
-            ];
-        }
-
-        $this->view->renderTemplate('Product/Show.html', $data);
+    if (!$id) {
+        // si pas d'id, rediriger vers la page d'accueil ou afficher erreur
+        header('Location: /');
+        exit;
     }
+
+    try {
+        $data = $this->getShowData((int)$id);
+    } catch (\Exception $e) {
+        $data = [
+            'article' => null,
+            'suggestions' => []
+        ];
+    }
+
+    $this->view->renderTemplate('Product/Show.html', $data);
+}
 }
