@@ -37,4 +37,21 @@ class User extends Model
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public function saveRememberToken(int $userId, ?string $token): bool
+    {
+        $db = static::getDB();
+        $stmt = $db->prepare("UPDATE users SET remember_token = :token WHERE id = :id");
+        return $stmt->execute(['token' => $token, 'id' => $userId]);
+    }
+
+    public function getUserByRememberToken(string $token): ?array
+    {
+        $db = static::getDB();
+        $stmt = $db->prepare("SELECT * FROM users WHERE remember_token = :token LIMIT 1");
+        $stmt->execute(['token' => $token]);
+        $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $user ?: null;
+    }
 }
