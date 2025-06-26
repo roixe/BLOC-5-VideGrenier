@@ -4,6 +4,7 @@
 use PHPUnit\Framework\MockObject\MockMethod;
 use PHPUnit\Framework\TestCase;
 use App\Controllers\Product;
+use App\Core\View;
 
 class PictureTest extends TestCase
 {
@@ -20,7 +21,7 @@ class PictureTest extends TestCase
         ob_start();
         // Création d'un tableau pour l'argument $route_params comme attendu par le constructeur
         $route_params = []; 
-        $controller = new Product($route_params);
+        $controller = new Product();
         $controller->indexAction();
         $output = ob_get_clean();
         // Vérifie que le message d'erreur est présent

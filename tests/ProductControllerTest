@@ -1,0 +1,63 @@
+<?php
+
+use PHPUnit\Framework\TestCase;
+use App\Controllers\Product;
+use App\Models\Articles;
+use App\Utility\Upload;
+
+class ProductControllerTest extends TestCase
+{
+    public function testCreateProduct_noPicture_returnsError()
+    {
+        $articlesMock = $this->createMock(Articles::class);
+        $uploadMock = $this->createMock(Upload::class);
+
+        $controller = new Product($articlesMock, $uploadMock);
+
+        $result = $controller->createProduct(
+            ['title' => 'Test produit'],
+            [], // pas de picture dans files
+            1
+        );
+
+        $this->assertNotEmpty($result['errors']);
+        $this->assertNull($result['id']);
+        $this->assertStringContainsString('photo', $result['errors'][0]);
+    }
+
+    
+    public function testGetShowData_returnsData()
+    {
+        $articlesMock = $this->createMock(Articles::class);
+        $uploadMock = $this->createMock(Upload::class); // pas utilisé ici mais besoin constructeur
+
+        $id = 42;
+        $articleData = [['id' => $id, 'title' => 'Article 42']];
+        $suggestionsData = [
+            ['id' => 1, 'title' => 'Suggestion 1'],
+            ['id' => 2, 'title' => 'Suggestion 2']
+        ];
+
+        $articlesMock->expects($this->once())
+            ->method('addOneView')
+            ->with($id);
+
+        $articlesMock->expects($this->once())
+            ->method('getSuggest')
+            ->willReturn($suggestionsData);
+
+        $articlesMock->expects($this->once())
+            ->method('getOne')
+            ->with($id)
+            ->willReturn($articleData);
+
+        $controller = new Product($articlesMock, $uploadMock);
+
+        $result = $controller->getShowData($id);
+
+        $this->assertArrayHasKey('article', $result);
+        $this->assertArrayHasKey('suggestions', $result);
+        $this->assertEquals($articleData[0], $result['article']);
+        $this->assertEquals($suggestionsData, $result['suggestions']);
+    }
+}

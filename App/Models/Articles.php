@@ -19,7 +19,7 @@ class Articles extends Model {
      * @return string|boolean
      * @throws Exception
      */
-    public static function getAll($filter) {
+    public function getAll($filter) {
         $db = static::getDB();
 
         $query = 'SELECT * FROM articles ';
@@ -46,7 +46,7 @@ class Articles extends Model {
      * @return string|boolean
      * @throws Exception
      */
-    public static function getOne($id) {
+    public  function getOne($id) {
         $db = static::getDB();
 
         $stmt = $db->prepare('
@@ -66,7 +66,7 @@ class Articles extends Model {
      * @return string|boolean
      * @throws Exception
      */
-    public static function addOneView($id) {
+    public function addOneView($id) {
         $db = static::getDB();
 
         $stmt = $db->prepare('
@@ -75,6 +75,8 @@ class Articles extends Model {
             WHERE articles.id = ?');
 
         $stmt->execute([$id]);
+
+        return true;
     }
 
     /**
@@ -83,7 +85,7 @@ class Articles extends Model {
      * @return string|boolean
      * @throws Exception
      */
-    public static function getByUser($id) {
+    public function getByUser($id) {
         $db = static::getDB();
 
         $stmt = $db->prepare('
@@ -102,7 +104,7 @@ class Articles extends Model {
      * @return string|boolean
      * @throws Exception
      */
-    public static function getSuggest() {
+    public  function getSuggest() {
         $db = static::getDB();
 
         $stmt = $db->prepare('
@@ -123,7 +125,7 @@ class Articles extends Model {
      * @return string|boolean
      * @throws Exception
      */
-    public static function save($data) {
+    public  function save($data) {
         $db = static::getDB();
 
         $stmt = $db->prepare('INSERT INTO articles(name, description, user_id, published_date) VALUES (:name, :description, :user_id,:published_date)');
@@ -140,7 +142,7 @@ class Articles extends Model {
         return $db->lastInsertId();
     }
 
-    public static function attachPicture($articleId, $pictureName){
+    public  function attachPicture($articleId, $pictureName){
         $db = static::getDB();
 
         $stmt = $db->prepare('UPDATE articles SET picture = :picture WHERE articles.id = :articleid');

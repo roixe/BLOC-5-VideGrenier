@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Contact produit{% endblock %}
+
+{% block body %}
+<h2>Contacter à propos du produit #{{ productId }}</h2>
+
+{% if success %}
+    <p style="color: green;">Votre message a été envoyé avec succès.</p>
+{% elseif error %}
+    <p style="color: red;">{{ error }}</p>
+{% endif %}
+
+<form method="POST">
+    <label>Nom :</label><br>
+    <input type="text" name="name" required><br><br>
+
+    <label>Email :</label><br>
+    <input type="email" name="email" required><br><br>
+
+    <label>Message :</label><br>
+    <textarea name="message" required></textarea><br><br>
+
+    <button type="submit">Envoyer</button>
+</form>
+{% endblock %}

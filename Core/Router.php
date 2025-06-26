@@ -102,39 +102,41 @@ class Router
      *
      * @return void
      */
-    public function dispatch($url)
-    {
-        $url = $this->removeQueryStringVariables($url);
+   public function dispatch($url)
+{
+    $url = $this->removeQueryStringVariables($url);
 
-        if ($this->match($url)) {
-            $controller = $this->params['controller'];
-            $controller = $this->convertToStudlyCaps($controller);
-            $controller = $this->getNamespace() . $controller;
+    if ($this->match($url)) {
+        $controller = $this->params['controller'];
+        $controller = $this->convertToStudlyCaps($controller);
+        $controller = $this->getNamespace() . $controller;
 
-            if (class_exists($controller)) {
+        if (class_exists($controller)) {
 
-                if(isset($this->params['private']) && !isset($_SESSION['user']['id'])){
-                    throw new \Exception("You must be logged in");
-                }
+            if (isset($this->params['private']) && !isset($_SESSION['user']['id'])) {
+                throw new \Exception("You must be logged in");
+            }
 
-                $controller_object = new $controller($this->params);
+            // Injecter les params dans $_GET pour les rendre accessibles dans le contrôleur
+            $_GET = array_merge($_GET, $this->params);
 
-                $action = $this->params['action'];
-                $action = $this->convertToCamelCase($action);
+            $controller_object = new $controller();
 
-                if (preg_match('/action$/i', $action) == 0) {
-                    $controller_object->$action();
+            $action = $this->params['action'];
+            $action = $this->convertToCamelCase($action) . 'Action';
 
-                } else {
-                    throw new \Exception("Method $action in controller $controller cannot be called directly - remove the Action suffix to call this method");
-                }
+            if (method_exists($controller_object, $action)) {
+                $controller_object->$action();
             } else {
-                throw new \Exception("Controller class $controller not found");
+                throw new \Exception("Method $action in controller $controller cannot be called");
             }
         } else {
-            throw new \Exception('No route matched.', 404);
+            throw new \Exception("Controller class $controller not found");
         }
+    } else {
+        throw new \Exception('No route matched.', 404);
     }
+}
 
     /**
      * Convert the string with hyphens to StudlyCaps,
