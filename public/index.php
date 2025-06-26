@@ -1,5 +1,7 @@
 <?php
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 /**
  * Front controller
  *
@@ -31,10 +33,11 @@ $router = new Core\Router();
 $router->add('', ['controller' => 'Home', 'action' => 'index']);
 $router->add('login', ['controller' => 'UserController', 'action' => 'login']);
 $router->add('register', ['controller' => 'UserController', 'action' => 'register']);
-$router->add('logout', ['controller' => 'UserController', 'action' => 'logout', 'private' => true]);
+$router->add('logout', ['controller' => 'UserController', 'action' => 'logout']);
 $router->add('account', ['controller' => 'UserController', 'action' => 'account', 'private' => true]);
 $router->add('product', ['controller' => 'Product', 'action' => 'index', 'private' => true]);
 $router->add('product/{id:\d+}', ['controller' => 'Product', 'action' => 'show']);
+$router->add('product/contact/{id:\d+}', ['controller' => 'Product', 'action' => 'contact', 'params' => ['id']]);
 $router->add('{controller}/{action}');
 
 /*

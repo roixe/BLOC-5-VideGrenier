@@ -108,4 +108,31 @@ public function showAction()
 
     $this->view->renderTemplate('Product/Show.html', $data);
 }
+public function contactAction()
+{
+    $productId = $this->route_params['id'] ?? null;
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $name = $_POST['name'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $message = $_POST['message'] ?? '';
+
+        $to = 'support@example.com';
+        $subject = "Contact à propos du produit #$productId";
+        $headers = "From: $email\r\nReply-To: $email\r\n";
+        $body = "Nom: $name\nEmail: $email\nMessage:\n$message";
+
+        if (mail($to, $subject, $body, $headers)) {
+            $success = true;
+        } else {
+            $error = "Erreur lors de l’envoi du message.";
+        }
+    }
+
+     $this->view->renderTemplate('Product/contact.html', [
+        'productId' => $productId,
+        'success' => $success ?? false,
+        'error' => $error ?? null
+    ]);
+}
 }
