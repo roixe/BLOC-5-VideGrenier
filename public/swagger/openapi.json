@@ -1,0 +1,255 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "VideGrenier API",
+    "version": "1.0.0",
+    "description": "L'API pour l'application VideGrenier, permettant de gérer les produits et les villes."
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Page d'accueil",
+        "responses": {
+          "200": {
+            "description": "Opération réussie"
+          }
+        }
+      }
+    },
+    "/login": {
+      "get": {
+        "summary": "Afficher la page de connexion",
+        "responses": {
+          "200": {
+            "description": "Opération réussie"
+          }
+        }
+      },
+      "post": {
+        "summary": "Soumettre le formulaire de connexion",
+        "responses": {
+          "200": {
+            "description": "Opération réussie"
+          },
+          "302": {
+            "description": "Redirection vers la page du compte"
+          }
+        }
+      }
+    },
+    "/register": {
+      "get": {
+        "summary": "Afficher la page d'inscription",
+        "responses": {
+          "200": {
+            "description": "Opération réussie"
+          }
+        }
+      },
+      "post": {
+        "summary": "Soumettre le formulaire d'inscription",
+        "responses": {
+          "200": {
+            "description": "Opération réussie"
+          },
+          "302": {
+            "description": "Redirection vers la page du compte"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "get": {
+        "summary": "Déconnexion de l'utilisateur",
+        "responses": {
+          "302": {
+            "description": "Redirection vers la page d'accueil"
+          }
+        }
+      }
+    },
+    "/account": {
+      "get": {
+        "summary": "Afficher la page du compte utilisateur",
+        "responses": {
+          "200": {
+            "description": "Opération réussie"
+          }
+        }
+      }
+    },
+    "/product": {
+      "get": {
+        "summary": "Afficher la page d'ajout de produit",
+        "responses": {
+          "200": {
+            "description": "Opération réussie"
+          }
+        }
+      },
+      "post": {
+        "summary": "Soumettre le formulaire d'ajout de produit",
+        "responses": {
+          "200": {
+            "description": "Opération réussie"
+          },
+          "302": {
+            "description": "Redirection vers la page du produit"
+          }
+        }
+      }
+    },
+    "/product/{id}": {
+      "get": {
+        "summary": "Afficher un produit spécifique",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Opération réussie"
+          }
+        }
+      }
+    },
+    "/product/contact/{id}": {
+      "get": {
+        "summary": "Afficher le formulaire de contact pour un produit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Opération réussie"
+          }
+        }
+      },
+      "post": {
+        "summary": "Soumettre le formulaire de contact pour un produit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Opération réussie"
+          },
+          "302": {
+            "description": "Redirection vers la page de succès"
+          }
+        }
+      }
+    },
+    "/product/success": {
+      "get": {
+        "summary": "Afficher la page de succès de l'envoi de formulaire",
+        "responses": {
+          "200": {
+            "description": "Opération réussie"
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "get": {
+        "summary": "Obtenir la liste des produits",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Terme de recherche pour filtrer les produits par nom",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Critère de tri",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Opération réussie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cities": {
+      "get": {
+        "summary": "Rechercher des villes",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Terme de recherche pour les villes",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Opération réussie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/documentation": {
+      "get": {
+        "summary": "Afficher la documentation de l'API",
+        "responses": {
+          "200": {
+            "description": "Opération réussie"
+          }
+        }
+      }
+    }
+  }
+}
