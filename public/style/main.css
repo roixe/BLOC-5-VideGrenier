@@ -1651,132 +1651,166 @@ footer {
 /*
 * Content Account
 */
-.bg-image {
-  text-align: center; }
-  .bg-image img {
-    width: 100%; }
+/* Conteneur principal centré avec flex */
+.login-wrapper {
+  display: flex;
+  justify-content: center; /* centre horizontalement */
+  align-items: center;     /* centre verticalement */
+  min-height: 100vh;       /* hauteur au moins égale à la fenêtre */
+  padding: 20px;
+  position: relative;
+  background: url('/images/login.jpg') no-repeat center center/cover;
+}
 
-.login-wraper {
-  position: relative; }
-  .login-wraper .login-window {
-    position: absolute;
-    width: 570px;
-    top: 50%;
-    left: 50%;
-    margin-left: -2px;
-    margin-top: -288px; }
-    .login-wraper .login-window .l-head {
-      background-color: #ffffff;
-      padding: 40px;
-      border-bottom: solid 1px #eceff0;
-      font-weight: 500;
-      font-size: 22px;
-      color: #343434;
-      border-top-left-radius: 3px;
-      border-top-right-radius: 3px; }
-      @media only screen and (max-width: 767px) {
-        .login-wraper .login-window .l-head {
-          background-color: #fbfdfe; } }
-    .login-wraper .login-window .l-form {
-      text-align: left;
-      background-color: #fbfdfe;
-      border-bottom-left-radius: 3px;
-      border-bottom-right-radius: 3px;
-      padding: 25px 70px 70px; }
-      .login-wraper .login-window .l-form label {
-        font-weight: 500; }
-      @media only screen and (max-width: 767px) {
-        .login-wraper .login-window .l-form .btn {
-          border-radius: 30px;
-          padding-top: 16px;
-          padding-bottom: 12px; } }
-  .login-wraper .checkbox {
-    font-weight: normal; }
-    @media only screen and (max-width: 767px) {
-      .login-wraper .checkbox {
-        margin-bottom: 30px; } }
-    .login-wraper .checkbox p {
-      margin-bottom: 4px; }
-    .login-wraper .checkbox .text2 {
-      display: block;
-      font-size: 14px;
-      color: #7e7e7e; }
-  .login-wraper .ortext {
-    padding-top: 25px;
-    color: #7e7e7e; }
-  .login-wraper .signuptext {
-    padding-top: 25px;
-    text-align: center;
-    color: #343434;
-    font-weight: 500; }
-    .login-wraper .signuptext.text-right {
-      text-align: right; }
-  .login-wraper .forgottext {
-    margin-top: 25px; }
-    .login-wraper .forgottext a {
-      color: #7e7e7e; }
-      .login-wraper .forgottext a:hover {
-        text-decoration: underline; }
+/* Fenêtre login avec taille max et responsive */
+.login-window {
+  background-color: #fbfdfe;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 570px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  padding: 40px 30px;
+  box-sizing: border-box;
+}
 
+/* Titre login */
+.l-head {
+  font-size: 22px;
+  font-weight: 500;
+  color: #343434;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* Formulaire */
+.l-form label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 5px;
+  color: #343434;
+}
+
+.l-form input[type="email"],
+.l-form input[type="password"] {
+  width: 100%;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+
+/* Checkbox style */
+.form-check {
+  margin-bottom: 20px;
+}
+
+.form-check-label .text2 {
+  font-size: 12px;
+  color: #7e7e7e;
+  display: block;
+  margin-top: 3px;
+}
+
+/* Bouton connexion */
+.btn-cv1 {
+  background-color: #ea2c5a;
+  border: none;
+  color: white;
+  padding: 12px 25px;
+  font-size: 16px;
+  border-radius: 30px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn-cv1:hover {
+  background-color: #b7135d;
+}
+
+/* Texte "or" et lien inscription */
+.login-footer {
+  margin-top: 20px;
+  text-align: center;
+  font-weight: 500;
+  color: #343434;
+}
+
+.login-footer .ortext {
+  display: inline-block;
+  margin: 0 10px;
+  color: #7e7e7e;
+}
+
+.login-footer a {
+  color: #ea2c5a;
+  text-decoration: none;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Texte mot de passe oublié */
+.forgottext {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.forgottext a {
+  color: #7e7e7e;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.forgottext a:hover {
+  text-decoration: underline;
+}
+
+/* Banner-text simple, en dessous sur mobile */
 .banner-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -50px;
-  margin-left: -580px;
-  width: 550px; }
-  .banner-text .line {
-    height: 1px;
-    border-top: solid 1px #ea2c5a;
-    padding-bottom: 50px;
-    width: 280px; }
-  .banner-text .b-text {
-    color: #ffffff;
-    font-size: 80px;
-    text-align: left;
-    line-height: 80px; }
-    .banner-text .b-text .color-b1 {
-      color: #b7135d; }
-    .banner-text .b-text .color-b2 {
-      color: #be154e; }
-    .banner-text .b-text .color-b3 {
-      color: #d71d52; }
-  .banner-text .overtext {
-    margin-top: 30px;
-    color: #a1a1a1;
-    text-align: left; }
+  color: white;
+  font-size: 80px;
+  line-height: 1;
+  font-weight: 700;
+  max-width: 550px;
+  margin: 20px auto;
+  text-align: center;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+}
 
-@media (min-width: 100px) and (max-width: 1365px) {
+.banner-text .line {
+  border-top: 2px solid #ea2c5a;
+  width: 280px;
+  margin: 20px auto;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .login-wrapper {
+    flex-direction: column;
+    background: none;
+    min-height: auto;
+    padding: 10px;
+  }
+  
+  .login-window {
+    max-width: 100%;
+    padding: 20px;
+    box-shadow: none;
+  }
+  
   .banner-text {
-    position: relative;
-    top: 0;
-    left: 0;
-    margin-top: 0;
-    margin-left: 0;
-    width: auto; }
-    .banner-text .line {
-      display: none; }
-    .banner-text .b-text {
-      color: #000000;
-      font-size: 30px;
-      text-align: center;
-      line-height: 30px;
-      padding-top: 30px; }
-    .banner-text .overtext {
-      margin: 15px 0;
-      color: #a1a1a1;
-      text-align: center; }
-  .login-wraper .login-window {
-    position: relative;
-    width: auto;
-    top: 0;
-    left: 0;
-    margin-left: 0;
-    margin-top: 0; }
-    .login-wraper .login-window .l-head {
-      padding: 20px 10px; }
-    .login-wraper .login-window .l-form {
-      padding: 25px 20px; } }
+    font-size: 35px;
+    max-width: 100%;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  .banner-text .line {
+    display: none;
+  }
+}
 
 /*
 * Content Account END
