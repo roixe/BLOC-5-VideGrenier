@@ -33,7 +33,7 @@ $router = new Core\Router();
 $router->add('', ['controller' => 'Home', 'action' => 'index']);
 $router->add('login', ['controller' => 'UserController', 'action' => 'login']);
 $router->add('register', ['controller' => 'UserController', 'action' => 'register']);
-$router->add('logout', ['controller' => 'UserController', 'action' => 'logout']);
+$router->add('logout', ['controller' => 'UserController', 'action' => 'logout', 'private' => true]);
 $router->add('account', ['controller' => 'UserController', 'action' => 'account', 'private' => true]);
 $router->add('product', ['controller' => 'Product', 'action' => 'index', 'private' => true]);
 $router->add('product/{id:\d+}', ['controller' => 'Product', 'action' => 'show']);
