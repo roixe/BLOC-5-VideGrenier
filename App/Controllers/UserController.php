@@ -70,37 +70,19 @@ class UserController
 
  public function logoutAction()
 {
-    ini_set('display_errors', 1);
-    error_reporting(E_ALL);
-
-    if (session_status() !== PHP_SESSION_ACTIVE) {
-        session_start();
-    }
-
-    if (isset($_SESSION['user']['id'])) {
-        $this->userModel->saveRememberToken($_SESSION['user']['id'], null);
-    }
-
     // Supprimer toutes les données de session
     $_SESSION = [];
 
-    // Supprimer le cookie de session
-    if (ini_get("session.use_cookies")) {
-        $params = session_get_cookie_params();
-        setcookie(session_name(), '', time() - 42000,
-            $params["path"], $params["domain"],
-            $params["secure"], $params["httponly"]
-        );
-    }
+    // Supprimer le cookie remember_me
 
+     setcookie('remember_me', '', time() - 3600, '/', '', false, true);
     // Détruire la session
     session_destroy();
 
-    // Supprimer le cookie remember_me
-    setcookie('remember_me', '', time() - 3600, '/', '', false, true);
-
+   
+    
     // Redirection
-    $this->view->renderTemplate('Home/index.html', [
+   $this->view->renderTemplate('Home/index.html', [
         'message' => 'Vous avez été déconnecté avec succès.'
     ]);
     exit;
